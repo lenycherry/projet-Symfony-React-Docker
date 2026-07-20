@@ -1,0 +1,17 @@
+# Symfony
+backend/vendor/
+backend/var/
+backend/.env.local
+
+# React
+frontend/node_modules/
+frontend/dist/
+
+# Fichiers d'environnement
+.env
+
+# IDE
+.vscode/
+
+# Système
+.DS_Store
