@@ -1,26 +1,31 @@
-import { useEffect, useState } from 'react'	
-import './App.css'
+import { useEffect, useState } from 'react'
 
-	function App() {
-		  const [message, setMessage] = useState('Chargement...')
+function App() {
+  const [users, setUsers] = useState([])
 
-		  useEffect(() => {
-			      fetch('http://localhost:8000/api/hello')
-			        .then((response) => response.json())
-			        .then((data) => {
-					        setMessage(data.message)
-					      })
-			        .catch((error) => {
-					        console.error(error)
-					        setMessage('Erreur de connexion à Symfony')
-					      })
-			    }, [])
+  useEffect(() => {
+    fetch('http://localhost:8000/api/users')
+      .then(response => response.json())
+      .then(data => {
+        setUsers(data.users)
+      })
+      .catch(error => {
+        console.error('Erreur API :', error)
+      })
+  }, [])
 
-		  return (
-			      <div>
-			        <h1>{message}</h1>
-			      </div>
-			    )
-	}
+  return (
+    <div>
+      <h1>Liste des utilisateurs</h1>
 
-	export default App
+      {users.map(user => (
+        <div key={user.id}>
+          <p>Email : {user.email}</p>
+          <p>Date de création : {user.createdAt}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export default App
