@@ -1,29 +1,44 @@
 import { useEffect, useState } from 'react'
+import { getUsers } from './services/api'
+import UserList from './components/UserList'
 
 function App() {
   const [users, setUsers] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  useEffect(() => {
-    fetch('http://localhost:8000/api/users')
-      .then(response => response.json())
+  const loadUsers = () => {
+    setLoading(true)
+
+    getUsers()
       .then(data => {
         setUsers(data.users)
       })
       .catch(error => {
-        console.error('Erreur API :', error)
+        setError(error.message)
       })
+      .finally(() => {
+        setLoading(false)
+      })
+  }
+
+  useEffect(() => {
+    loadUsers()
   }, [])
+
+  if (loading) {
+    return <p>Chargement des utilisateurs...</p>
+  }
+
+  if (error) {
+    return <p>Erreur : {error}</p>
+  }
 
   return (
     <div>
-      <h1>Liste des utilisateurs</h1>
+      <h1>Mon application Symfony React</h1>
 
-      {users.map(user => (
-        <div key={user.id}>
-          <p>Email : {user.email}</p>
-          <p>Date de création : {user.createdAt}</p>
-        </div>
-      ))}
+      <UserList users={users} />
     </div>
   )
 }

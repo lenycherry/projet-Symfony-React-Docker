@@ -1,4 +1,4 @@
-FROM php:8.3-cli
+FROM php:8.3-fpm
 
 WORKDIR /app
 
@@ -16,4 +16,4 @@ RUN docker-php-ext-install \
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-CMD ["tail", "-f", "/dev/null"]
+CMD ["php-fpm"]
