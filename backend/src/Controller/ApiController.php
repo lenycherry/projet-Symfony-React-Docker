@@ -94,4 +94,26 @@ class ApiController extends AbstractController
         'id' => $user->getId()
     ]);
 }
+    #[Route('/api/users/{id}', methods: ['DELETE'])]
+        public function deleteUser(
+        int $id,
+        UserRepository $userRepository,
+        EntityManagerInterface $entityManager
+    )   : JsonResponse
+{
+    $user = $userRepository->find($id);
+
+    if (!$user) {
+        return new JsonResponse([
+            'error' => 'Utilisateur non trouvé'
+        ], 404);
+    }
+
+    $entityManager->remove($user);
+    $entityManager->flush();
+
+    return new JsonResponse([
+        'message' => 'Utilisateur supprimé'
+    ]);
+}
 }

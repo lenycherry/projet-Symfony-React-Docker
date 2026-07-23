@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { updateUser } from '../services/api'
+import { updateUser, deleteUser } from '../services/api'
 
 function UserList({ users, onUserUpdated }) {
 
@@ -30,6 +30,18 @@ function UserList({ users, onUserUpdated }) {
   }
 
 
+  const handleDelete = async (id) => {
+    try {
+      await deleteUser(id)
+
+      onUserUpdated()
+
+    } catch (error) {
+      setError(error.message)
+    }
+  }
+
+
   return (
     <div>
 
@@ -43,6 +55,7 @@ function UserList({ users, onUserUpdated }) {
           {editingId === user.id ? (
 
             <div>
+
               <input
                 type="email"
                 value={email}
@@ -53,19 +66,30 @@ function UserList({ users, onUserUpdated }) {
                 Enregistrer
               </button>
 
+              <button onClick={() => setEditingId(null)}>
+                Annuler
+              </button>
+
             </div>
 
           ) : (
 
             <div>
+
               <p>Email : {user.email}</p>
 
               <p>
                 Créé le : {user.createdAt}
               </p>
 
+
               <button onClick={() => handleEdit(user)}>
                 Modifier
+              </button>
+
+
+              <button onClick={() => handleDelete(user.id)}>
+                Supprimer
               </button>
 
             </div>

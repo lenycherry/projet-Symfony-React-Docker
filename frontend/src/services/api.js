@@ -50,3 +50,19 @@ export async function updateUser(id, user) {
 
     return response.json();
 }
+
+
+export async function deleteUser(id) {
+
+    const response = await fetch(`${API_URL}/users/${id}`, {
+        method: "DELETE",
+    });
+
+
+    if (!response.ok) {
+        throw new Error("Erreur lors de la suppression de l'utilisateur");
+    }
+
+
+    return response.json();
+}
