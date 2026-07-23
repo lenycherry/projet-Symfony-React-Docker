@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getUsers } from './services/api'
 import UserList from './components/UserList'
+import UserForm from './components/UserForm'
 
 function App() {
   const [users, setUsers] = useState([])
@@ -9,6 +10,7 @@ function App() {
 
   const loadUsers = () => {
     setLoading(true)
+    setError(null)
 
     getUsers()
       .then(data => {
@@ -37,6 +39,8 @@ function App() {
   return (
     <div>
       <h1>Mon application Symfony React</h1>
+
+      <UserForm onUserCreated={loadUsers} />
 
       <UserList users={users} />
     </div>

@@ -1,5 +1,6 @@
 const API_URL = "/api";
 
+
 export async function getUsers() {
     const response = await fetch(`${API_URL}/users`);
 
@@ -11,24 +12,21 @@ export async function getUsers() {
 }
 
 
-export async function createUser(email) {
+export async function createUser(user) {
+
     const response = await fetch(`${API_URL}/users`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-            email: email,
-        }),
+        body: JSON.stringify(user),
     });
+
 
     if (!response.ok) {
         throw new Error("Erreur lors de la création de l'utilisateur");
     }
 
-    const text = await response.text();
 
-console.log("Réponse reçue :", text);
-
-return JSON.parse(text);
+    return response.json();
 }

@@ -6,7 +6,8 @@ function UserForm({ onUserCreated }) {
   const [error, setError] = useState(null)
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
+    console.log("Formulaire envoyé", email);
 
     try {
       await createUser({ email })
