@@ -15,7 +15,7 @@ class ApiController extends AbstractController
     #[Route('/api/hello', methods: ['GET'])]
     public function hello(): JsonResponse
     {
-        return new JsonResponse([
+    return new JsonResponse([
             'message' => 'Bonjour depuis Symfony !'
         ]);
     }
@@ -56,9 +56,42 @@ class ApiController extends AbstractController
     $entityManager->persist($user);
     $entityManager->flush();
 
-    return new JsonResponse([
+     return new JsonResponse([
         'message' => 'Utilisateur créé',
         'id' => $user->getId()
     ], 201);
+}
+
+
+    #[Route('/api/users/{id}', methods: ['PUT'])]
+        public function updateUser(
+        int $id,
+        Request $request,
+        UserRepository $userRepository,
+        EntityManagerInterface $entityManager
+    )   : JsonResponse
+{
+    $user = $userRepository->find($id);
+
+    if (!$user) {
+        return new JsonResponse([
+            'error' => 'Utilisateur non trouvé'
+        ], 404);
+    }
+
+
+    $data = json_decode($request->getContent(), true);
+
+
+    $user->setEmail($data['email']);
+
+
+    $entityManager->flush();
+
+
+    return new JsonResponse([
+        'message' => 'Utilisateur modifié',
+        'id' => $user->getId()
+    ]);
 }
 }

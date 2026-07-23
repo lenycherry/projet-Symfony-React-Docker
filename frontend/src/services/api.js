@@ -30,3 +30,23 @@ export async function createUser(user) {
 
     return response.json();
 }
+
+
+export async function updateUser(id, user) {
+
+    const response = await fetch(`${API_URL}/users/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+    });
+
+
+    if (!response.ok) {
+        throw new Error("Erreur lors de la modification de l'utilisateur");
+    }
+
+
+    return response.json();
+}

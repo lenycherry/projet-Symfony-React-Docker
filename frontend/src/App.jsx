@@ -42,7 +42,10 @@ function App() {
 
       <UserForm onUserCreated={loadUsers} />
 
-      <UserList users={users} />
+      <UserList 
+        users={users}
+        onUserUpdated={loadUsers}
+/>
     </div>
   )
 }
