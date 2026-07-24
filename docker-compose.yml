@@ -1,5 +1,24 @@
 services:
 
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+
+    container_name: php
+
+    volumes:
+      - ./backend:/app
+
+    working_dir: /app
+
+    expose:
+      - "9000"
+
+    depends_on:
+      - database
+
+
   nginx:
     image: nginx:latest
 
@@ -15,19 +34,6 @@ services:
     depends_on:
       - php
 
-  php:
-    build:
-      context: .
-      dockerfile: docker/php/Dockerfile
-
-    container_name: php
-
-    volumes:
-      - ./backend:/app
-
-    depends_on:
-      - database
-
 
   database:
     image: mysql:8.4
@@ -35,10 +41,10 @@ services:
     container_name: database
 
     environment:
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: app
       MYSQL_USER: symfony
       MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: root
 
     ports:
       - "3306:3306"
@@ -54,16 +60,39 @@ services:
 
     container_name: node
 
-    working_dir: /app
-
     volumes:
       - ./frontend:/app
+      - /app/node_modules
+
+    working_dir: /app
 
     ports:
       - "5173:5173"
 
-    tty: true
+    command: npm run dev -- --host 0.0.0.0
+
+    depends_on:
+      - php
+
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+
+    container_name: phpmyadmin
+
+    depends_on:
+      - database
+
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+
+    ports:
+      - "8080:80"
 
 
 volumes:
-  database_data: 
+
+  database_data:
