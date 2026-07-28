@@ -3,13 +3,13 @@
 namespace App\Controller;
 
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController
 {
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
-    public function login(): JsonResponse
+    public function login(): Response
     {
-        return new JsonResponse(null, 204);
+        return new Response();
     }
 }
