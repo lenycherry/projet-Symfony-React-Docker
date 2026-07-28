@@ -12,17 +12,19 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Service\ApiResponse;
 
 final class RegisterController extends AbstractController
 {
     #[Route('/api/register', name: 'api_register', methods: ['POST'])]
     public function index(
-        Request $request,
-        ValidatorInterface $validator,
-        UserRepository $userRepository,
-        UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface $entityManager
-    ): JsonResponse {
+    Request $request,
+    ValidatorInterface $validator,
+    UserRepository $userRepository,
+    UserPasswordHasherInterface $passwordHasher,
+    EntityManagerInterface $entityManager,
+    ApiResponse $apiResponse
+): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
         $constraints = new Assert\Collection([
@@ -39,9 +41,13 @@ final class RegisterController extends AbstractController
         $errors = $validator->validate($data, $constraints);
 
         if (count($errors) > 0) {
-            return $this->json([
-                'errors' => (string) $errors,
-            ], 400);
+            return $apiResponse->error(
+    'Erreur de validation',
+    [
+        'details' => (string) $errors,
+    ],
+    400
+);
         }
 
         $existingUser = $userRepository->findOneBy([
@@ -49,9 +55,11 @@ final class RegisterController extends AbstractController
         ]);
 
         if ($existingUser) {
-            return $this->json([
-                'message' => 'Cet email existe déjà',
-            ], 409);
+            return $apiResponse->error(
+    'Cet email existe déjà',
+    [],
+    409
+);
         }
 
         $user = new User();
@@ -70,9 +78,12 @@ final class RegisterController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return $this->json([
-            'message' => 'Utilisateur créé',
-            'email' => $user->getEmail(),
-        ], 201);
+        return $apiResponse->success(
+    'Utilisateur créé',
+    [
+        'email' => $user->getEmail(),
+    ],
+    201
+);
     }
 }
