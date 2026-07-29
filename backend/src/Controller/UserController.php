@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Service\ApiResponse;
+use App\Service\ValidationErrorFormatter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,6 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 
 final class UserController extends AbstractController
 {
@@ -46,7 +48,8 @@ final class UserController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         ApiResponse $apiResponse,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        ValidationErrorFormatter $formatter
     ): JsonResponse {
 
         $user = $this->getUser();
@@ -59,12 +62,7 @@ final class UserController extends AbstractController
             );
         }
 
-
-        $data = json_decode(
-            $request->getContent(),
-            true
-        );
-
+        $data = json_decode($request->getContent(), true);
 
         $constraints = new Assert\Collection([
             'email' => [
@@ -73,23 +71,18 @@ final class UserController extends AbstractController
             ],
         ]);
 
-
         $errors = $validator->validate(
             $data,
             $constraints
         );
 
-
         if (count($errors) > 0) {
             return $apiResponse->error(
                 'Erreur de validation',
-                [
-                    'details' => (string) $errors,
-                ],
+                $formatter->format($errors),
                 400
             );
         }
-
 
         if ($data['email'] !== $user->getUserIdentifier()) {
 
@@ -99,7 +92,6 @@ final class UserController extends AbstractController
                     'email' => $data['email']
                 ]);
 
-
             if ($existingUser) {
                 return $apiResponse->error(
                     'Cet email existe déjà',
@@ -108,15 +100,12 @@ final class UserController extends AbstractController
                 );
             }
 
-
             $user->setEmail(
                 $data['email']
             );
         }
 
-
         $entityManager->flush();
-
 
         return $apiResponse->success(
             'Profil mis à jour',
@@ -133,7 +122,8 @@ final class UserController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $entityManager,
         ApiResponse $apiResponse,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        ValidationErrorFormatter $formatter
     ): JsonResponse {
 
         $user = $this->getUser();
@@ -146,12 +136,7 @@ final class UserController extends AbstractController
             );
         }
 
-
-        $data = json_decode(
-            $request->getContent(),
-            true
-        );
-
+        $data = json_decode($request->getContent(), true);
 
         $constraints = new Assert\Collection([
             'oldPassword' => [
@@ -163,23 +148,18 @@ final class UserController extends AbstractController
             ],
         ]);
 
-
         $errors = $validator->validate(
             $data,
             $constraints
         );
 
-
         if (count($errors) > 0) {
             return $apiResponse->error(
                 'Erreur de validation',
-                [
-                    'details' => (string) $errors,
-                ],
+                $formatter->format($errors),
                 400
             );
         }
-
 
         if (
             !$passwordHasher->isPasswordValid(
@@ -194,7 +174,6 @@ final class UserController extends AbstractController
             );
         }
 
-
         $user->setPassword(
             $passwordHasher->hashPassword(
                 $user,
@@ -202,9 +181,7 @@ final class UserController extends AbstractController
             )
         );
 
-
         $entityManager->flush();
-
 
         return $apiResponse->success(
             'Mot de passe modifié'
@@ -228,10 +205,8 @@ final class UserController extends AbstractController
             );
         }
 
-
         $entityManager->remove($user);
         $entityManager->flush();
-
 
         return $apiResponse->success(
             'Compte supprimé'

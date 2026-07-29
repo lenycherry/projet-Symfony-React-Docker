@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Service\ApiResponse;
+use App\Service\ValidationErrorFormatter;
 
 final class RegisterController extends AbstractController
 {
@@ -23,7 +24,9 @@ final class RegisterController extends AbstractController
     UserRepository $userRepository,
     UserPasswordHasherInterface $passwordHasher,
     EntityManagerInterface $entityManager,
-    ApiResponse $apiResponse
+    ApiResponse $apiResponse,
+    ValidationErrorFormatter $formatter,
+
 ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
@@ -43,9 +46,7 @@ final class RegisterController extends AbstractController
         if (count($errors) > 0) {
             return $apiResponse->error(
     'Erreur de validation',
-    [
-        'details' => (string) $errors,
-    ],
+    $formatter->format($errors),
     400
 );
         }
