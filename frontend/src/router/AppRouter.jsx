@@ -5,8 +5,8 @@ import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
 import Profile from "../pages/Profile";
 
-import PrivateRoute from "../components/PrivateRoute";
-
+import PrivateRoute from "./PrivateRoute";
+import PublicRoute from "./PublicRoute";
 
 export default function AppRouter() {
 
@@ -16,17 +16,23 @@ export default function AppRouter() {
 
             <Routes>
 
-                <Route 
-                    path="/" 
-                    element={<Login />} 
+                <Route
+                    path="/"
+                    element={
+                        <PublicRoute>
+                            <Login />
+                        </PublicRoute>
+                    }
                 />
 
-
-                <Route 
-                    path="/register" 
-                    element={<Register />} 
+                <Route
+                    path="/register"
+                    element={
+                        <PublicRoute>
+                            <Register />
+                        </PublicRoute>
+                    }
                 />
-
 
                 <Route
                     path="/dashboard"
@@ -36,7 +42,6 @@ export default function AppRouter() {
                         </PrivateRoute>
                     }
                 />
-
 
                 <Route
                     path="/profile"
