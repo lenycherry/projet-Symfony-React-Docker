@@ -1,68 +1,21 @@
-const API_URL = "/api";
+import axios from "axios";
 
+const api = axios.create({
+    baseURL: "/api",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
 
-export async function getUsers() {
-    const response = await fetch(`${API_URL}/users`);
+api.interceptors.request.use((config) => {
 
-    if (!response.ok) {
-        throw new Error("Erreur lors du chargement des utilisateurs");
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
     }
 
-    return response.json();
-}
+    return config;
+});
 
-
-export async function createUser(user) {
-
-    const response = await fetch(`${API_URL}/users`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-    });
-
-
-    if (!response.ok) {
-        throw new Error("Erreur lors de la création de l'utilisateur");
-    }
-
-
-    return response.json();
-}
-
-
-export async function updateUser(id, user) {
-
-    const response = await fetch(`${API_URL}/users/${id}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-    });
-
-
-    if (!response.ok) {
-        throw new Error("Erreur lors de la modification de l'utilisateur");
-    }
-
-
-    return response.json();
-}
-
-
-export async function deleteUser(id) {
-
-    const response = await fetch(`${API_URL}/users/${id}`, {
-        method: "DELETE",
-    });
-
-
-    if (!response.ok) {
-        throw new Error("Erreur lors de la suppression de l'utilisateur");
-    }
-
-
-    return response.json();
-}
+export default api;
