@@ -37,7 +37,10 @@ final class RegisterController extends AbstractController
             ],
             'password' => [
                 new Assert\NotBlank(),
-                new Assert\Length(min: 8),
+                new Assert\Length(
+                min: 8,
+                minMessage: 'Le mot de passe doit contenir au moins {{ limit }} caractères.'
+                ),
             ],
         ]);
 

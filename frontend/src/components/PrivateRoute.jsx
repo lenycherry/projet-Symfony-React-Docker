@@ -5,18 +5,35 @@ import { useAuth } from "../context/AuthContext";
 
 export default function PrivateRoute({ children }) {
 
-    const { isAuthenticated, loading } = useAuth();
+    const {
+        user,
+        loading,
+    } = useAuth();
 
 
     if (loading) {
-        return <p>Chargement...</p>;
+
+        return (
+            <p>
+                Chargement...
+            </p>
+        );
+
     }
 
 
-    if (!isAuthenticated) {
-        return <Navigate to="/" replace />;
+    if (!user) {
+
+        return (
+            <Navigate
+                to="/"
+                replace
+            />
+        );
+
     }
 
 
     return children;
+
 }
