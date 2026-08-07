@@ -7,10 +7,12 @@ export default function Navbar() {
 
     const navigate = useNavigate();
 
+
     const {
         user,
         logout,
     } = useAuth();
+
 
 
     function handleLogout() {
@@ -22,42 +24,74 @@ export default function Navbar() {
     }
 
 
+
     return (
+
         <nav>
 
-            <div>
-                <Link to="/dashboard">
-                    Dashboard
-                </Link>
-            </div>
+
+            {user && (
+
+                <>
+
+                    <Link to="/dashboard">
+                        Dashboard
+                    </Link>
 
 
-           <div>
-
-    {user && (
-        <span>
-            {user.email}
-        </span>
-    )}
+                    {" | "}
 
 
-    {" "}
+                    <Link to="/profile">
+                        Profil
+                    </Link>
 
 
-    <Link to="/profile">
-        Profil
-    </Link>
+
+                    {user.roles.includes("ROLE_ADMIN") && (
+
+                        <>
+
+                            {" | "}
 
 
-    {" "}
+                            <Link to="/users">
+                                Utilisateurs
+                            </Link>
+
+                        </>
+
+                    )}
 
 
-    <button onClick={handleLogout}>
-        Déconnexion
-    </button>
 
-</div>
+                    {" | "}
+
+
+                    <span>
+                        {user.email}
+                    </span>
+
+
+
+                    {" "}
+
+
+
+                    <button
+                        onClick={handleLogout}
+                    >
+                        Déconnexion
+                    </button>
+
+
+                </>
+
+            )}
+
 
         </nav>
+
     );
+
 }
