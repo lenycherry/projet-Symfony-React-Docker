@@ -214,4 +214,37 @@ final class UserController extends AbstractController
             'Compte supprimé'
         );
     }
+
+    #[Route('/api/users', name: 'api_users_list', methods: ['GET'])]
+public function list(
+    EntityManagerInterface $entityManager,
+    ApiResponse $apiResponse
+): JsonResponse {
+
+    $users = $entityManager
+        ->getRepository(User::class)
+        ->findAll();
+
+    $data = array_map(
+
+        static function (User $user) {
+
+            return [
+                'id' => $user->getId(),
+                'email' => $user->getEmail(),
+                'roles' => $user->getRoles(),
+            ];
+
+        },
+
+        $users
+
+    );
+
+    return $apiResponse->success(
+        'Liste des utilisateurs',
+        $data
+    );
+
+}
 }

@@ -4,6 +4,7 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
 import Profile from "../pages/Profile";
+import Users from "../pages/Users";
 
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
@@ -52,7 +53,18 @@ export default function AppRouter() {
                     }
                 />
 
+                <Route
+                    path="/users"
+                    element={
+                        <PrivateRoute>
+                            <Users />
+                        </PrivateRoute>
+                    }
+                />
+
             </Routes>
+
+ 
 
         </BrowserRouter>
 
